@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>By KOC</title>
+</head>
+<body>
+
+<h1>Ufak bir dönüştürme işi</h1>
+
+<label for="girisDizesi">6 Haneli Harf Dizesi Girin:</label>
+<input type="text" id="girisDizesi" name="girisDizesi" maxlength="6">
+<button onclick="donustur()">Dönüştür</button>
+
+<p id="sonuc"></p>
+
+<script>
+function donustur() {
+  const girisDizesi = document.getElementById("girisDizesi").value.toUpperCase();
+
+  if (girisDizesi.length !== 6 || !/^[A-Z]+$/.test(girisDizesi)) {
+    document.getElementById("sonuc").innerText = "Lütfen 6 haneli ve sadece harflerden oluşan bir dize girin.";
+    return;
+  }
+
+  const harfSayiTablosu = {
+    'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8,
+    'J': 9, 'K': 10, 'L': 11, 'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16,
+    'R': 17, 'S': 18, 'T': 19, 'U': 20, 'V': 21, 'W': 22, 'X': 23, 'Y': 24,
+    'Z': 25
+  };
+
+  const sayiHarfTablosu = Object.keys(harfSayiTablosu).reduce((obj, key) => {
+    obj[harfSayiTablosu[key]] = key;
+    return obj;
+  }, {});
+
+  // 2. Aşama: Harfleri sayılara dönüştür
+  const sayiDizisi2 = girisDizesi.split('').map(harf => harfSayiTablosu[harf]);
+
+  // 4. Aşama: Sayılara 1'den 6'ya kadar ekle
+  const sayiDizisi4 = sayiDizisi2.map((sayi, index) => sayi + (index + 1));
+
+  // 5. Aşama: MOD 26 uygula
+  const sayiDizisi5 = sayiDizisi4.map(sayi => sayi % 26);
+
+  // 7. Aşama: 5 haneli fark dizisi oluştur
+  const sayiDizisi7 = [];
+  for (let i = 1; i < sayiDizisi2.length; i++) {
+    sayiDizisi7.push(sayiDizisi2[i] - sayiDizisi2[i - 1]);
+  }
+
+  // 8. Aşama: 5. ve 7. dizileri topla (6 haneli sonuç)
+  const sayiDizisi8 = [];
+  for (let i = 0; i < 5; i++) {
+    sayiDizisi8.push(sayiDizisi5[i] + sayiDizisi7[i]);
+  }
+  sayiDizisi8.push(sayiDizisi5[5] + 0); // 6. elemana 0 ekle
+
+  // 9. Aşama: Sayıları harflere dönüştür
+  const harfDizisi9 = sayiDizisi8.map(sayi => sayiHarfTablosu[sayi % 26]);
+
+  // 10. Aşama: Harf dizesini ters çevir
+  const harfDizisi10 = harfDizisi9.join('').split('').reverse().join('');
+
+  // 11. Aşama: Sondan 5 karakteri al
+  const sonucDizesi = harfDizisi10.slice(-5);
+
+  document.getElementById("sonuc").innerText = "Dönüştürülmüş Dize: " + sonucDizesi;
+}
+</script>
+
+</body>
+</html>
